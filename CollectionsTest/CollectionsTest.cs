@@ -17,16 +17,21 @@ namespace CollectionsTest
                 new (int, int)[] { (3, 1), (3, 2), (3, 3) },
                 new (int, int)[] { (1, 1) }
             };
-            foreach (var (group, i) in nums.GroupChunkBy(n => n.Item1).Select((group, i) => (group, i)))
+            var i = 0;
+            foreach (var group in nums.GroupChunkBy(n => n.Item1))
             {
                 for (int k = 0; k < 3; k++)
                 {
                     Assert.Equal(chunks[i][0].Item1, group.Key);
-                    foreach(var (n, j) in group.Select((n, j) => (n, j)))
+                    var j = 0;
+                    foreach(var n in group)
                     {
                         Assert.Equal(chunks[i][j], n);
+                        j++;
                     }
+                    Assert.Equal(chunks[i].Length, j);
                 }
+                i++;
             }
         }
     }
