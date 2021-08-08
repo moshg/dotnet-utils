@@ -35,10 +35,10 @@ namespace mosh.Collections
             return value;
         }
 
-        public static IEnumerable<Grouping<TKey, TSource>> GroupChunkBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector) =>
-            new GroupChunkEnumerable<TKey, TSource>(source, keySelector);
+        public static IEnumerable<IGrouping<TKey, TSource>> GroupChunkBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+            => new GroupChunkEnumerable<TKey, TSource>(source, keySelector);
 
-        internal class GroupChunkEnumerable<TKey, TElement> : IEnumerable<Grouping<TKey, TElement>>
+        internal class GroupChunkEnumerable<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>
         {
             private readonly IEnumerable<TElement> _elements;
             private readonly Func<TElement, TKey> _selector;
@@ -49,7 +49,7 @@ namespace mosh.Collections
                 _selector = keySelector;
             }
 
-            public IEnumerator<Grouping<TKey, TElement>> GetEnumerator() =>
+            public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator() =>
                 new Enumerator(_elements.GetEnumerator(), _selector);
             IEnumerator IEnumerable.GetEnumerator() =>
                 new Enumerator(_elements.GetEnumerator(), _selector);
@@ -126,9 +126,7 @@ namespace mosh.Collections
                 }
 
                 public void Dispose()
-                {
-                    _etor.Dispose();
-                }
+                    => _etor.Dispose();
 
                 public void Reset()
                 {
@@ -138,7 +136,7 @@ namespace mosh.Collections
             }
         }
 
-        public struct Grouping<TKey, TElement> : IGrouping<TKey, TElement>
+        public class Grouping<TKey, TElement> : IGrouping<TKey, TElement>
         {
             private readonly TKey _key;
             private readonly TElement[] _elements;

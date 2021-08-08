@@ -1,6 +1,5 @@
-using System.Linq;
-using Xunit;
 using mosh.Collections;
+using Xunit;
 
 namespace CollectionsTest
 {
