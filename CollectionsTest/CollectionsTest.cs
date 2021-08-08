@@ -19,10 +19,13 @@ namespace CollectionsTest
             };
             foreach (var (group, i) in nums.GroupChunkBy(n => n.Item1).Select((group, i) => (group, i)))
             {
-                Assert.Equal(chunks[i][0].Item1, group.Key);
-                foreach(var (n, j) in group.Select((n, j) => (n, j)))
+                for (int k = 0; k < 3; k++)
                 {
-                    Assert.Equal(chunks[i][j], n);
+                    Assert.Equal(chunks[i][0].Item1, group.Key);
+                    foreach(var (n, j) in group.Select((n, j) => (n, j)))
+                    {
+                        Assert.Equal(chunks[i][j], n);
+                    }
                 }
             }
         }
