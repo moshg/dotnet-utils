@@ -61,7 +61,7 @@ namespace mosh.Collections
                 private readonly Func<TElement, TKey> _selector;
                 private TKey? _key;
                 private List<TElement>? _elements;
-                private IEqualityComparer<TKey>? _cmp;
+                private IEqualityComparer<TKey?>? _cmp;
                 private Grouping<TKey, TElement>? _current;
 
                 internal Enumerator(IEnumerator<TElement> etor, Func<TElement, TKey> selector)
