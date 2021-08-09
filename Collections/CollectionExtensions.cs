@@ -57,8 +57,8 @@ namespace mosh.Collections
             private class Enumerator : IEnumerator<Grouping<TKey, TElement>>
             {
                 private int _state;
-                private readonly IEnumerator<TElement> _etor;
-                private readonly Func<TElement, TKey> _selector;
+                private IEnumerator<TElement>? _etor;
+                private Func<TElement, TKey>? _selector;
                 private TKey? _key;
                 private List<TElement>? _elements;
                 private IEqualityComparer<TKey?>? _cmp;
@@ -80,26 +80,26 @@ namespace mosh.Collections
                     switch (_state)
                     {
                         case 0:
-                            if (!_etor.MoveNext())
+                            if (!_etor!.MoveNext())
                             {
                                 _state = 3;
                                 break;
                             }
                             var initElem = _etor.Current;
-                            _key = _selector(initElem);
+                            _key = _selector!(initElem);
                             _elements = new List<TElement> { initElem };
-                            _cmp = EqualityComparer<TKey>.Default;
+                            _cmp = EqualityComparer<TKey?>.Default;
                             _state = 1;
                             goto case 1;
                         case 1:
-                            if (!_etor.MoveNext())
+                            if (!_etor!.MoveNext())
                             {
                                 _current = new Grouping<TKey, TElement>(_key!, _elements!.ToArray());
                                 _state = 2;
                                 return true;
                             }
                             var elem = _etor.Current;
-                            var key = _selector(elem);
+                            var key = _selector!(elem);
                             if (_cmp!.Equals(key, _key))
                             {
                                 _elements!.Add(elem);
@@ -114,11 +114,7 @@ namespace mosh.Collections
                                 return true;
                             }
                         case 2:
-                            _key = default;
-                            _elements!.Clear();
-                            _elements = null;
-                            _cmp = null;
-                            _current = null;
+                            Dispose();
                             _state = 3;
                             break;
                     }
@@ -126,13 +122,21 @@ namespace mosh.Collections
                 }
 
                 public void Dispose()
-                    => _etor.Dispose();
-
-                public void Reset()
                 {
-                    _etor.Reset();
-                    _state = 0;
+                    if (_etor != null)
+                    {
+                        _key = default;
+                        _elements!.Clear();
+                        _elements = null;
+                        _cmp = null;
+                        _current = null; 
+                        _selector = null;
+                        _etor.Dispose();
+                        _etor = null;
+                    }
                 }
+
+                public void Reset() => new NotSupportedException();
             }
         }
 
